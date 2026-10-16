@@ -18,7 +18,7 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 
 // Ghi đè HTTP method từ query string ?_method=PATCH|DELETE
-app.use(methodOverride("_method"));
+app.use(methodOverride("_method", { methods: ["POST"] }));
 
 // Phục vụ các file tĩnh (CSS, hình ảnh, favicon)
 app.use(express.static(path.join(__dirname, "../public")));
@@ -59,8 +59,16 @@ app.use((req, res) => {
 
 // 5. Middleware xử lý lỗi tập trung 500
 app.use((err, req, res, next) => {
-  console.error("Lỗi Server:", err);
+  // Do not log Prisma messages, request bodies or connection strings.
+  console.error("Lỗi Server:", {
+    type: err && err.name,
+    code: err && typeof err.code === "string" && /^P\d{4}$/.test(err.code) ? err.code : undefined,
+    method: req.method,
+    route: req.route ? req.route.path : "unknown",
+  });
+  if (res.headersSent) return next(err);
   res.status(500).render("404", {
+    statusCode: 500,
     title: "500 - Lỗi Máy Chủ Nội Bộ",
     message: "Đã xảy ra sự cố trong quá trình xử lý yêu cầu. Vui lòng thử lại sau.",
   });

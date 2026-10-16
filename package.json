@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
+    "test": "node --test tests/validation.test.js tests/http.test.js",
+    "test:db": "node --test tests/database.test.js",
     "seed": "node prisma/seed.js",
     "crawl": "node scripts/crawl-dishes.js",
     "db:push": "npx prisma db push",

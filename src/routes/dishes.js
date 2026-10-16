@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const prisma = require("../prisma");
+const { parseValidId } = require("../validation");
 
 // 1. GET /dishes - Danh sách món ăn cho khách hàng (có tìm kiếm qua query `q`)
 router.get("/", async (req, res, next) => {
@@ -36,10 +37,10 @@ router.get("/", async (req, res, next) => {
 // 2. GET /dishes/:id - Chi tiết một món ăn (404 khi id sai hoặc không tồn tại)
 router.get("/:id", async (req, res, next) => {
   try {
-    const id = Number(req.params.id);
+    const id = parseValidId(req.params.id);
 
     // Kiểm tra id có phải là số nguyên dương hợp lệ không
-    if (isNaN(id) || !Number.isInteger(id) || id <= 0) {
+    if (id === null) {
       return res.status(404).render("404", {
         title: "404 - Không Tìm Thấy Món Ăn",
         message: `ID món ăn "${req.params.id}" không hợp lệ.`,

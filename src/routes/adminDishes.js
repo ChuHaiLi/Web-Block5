@@ -2,12 +2,8 @@ const express = require("express");
 const router = express.Router();
 const prisma = require("../prisma");
 
-// Helper parse and validate ID
-function parseValidId(idParam) {
-  const id = Number(idParam);
-  if (isNaN(id) || !Number.isInteger(id) || id <= 0) return null;
-  return id;
-}
+const { parseValidId, validateDish } = require("../validation");
+const { notFound, isPrismaError, serializable } = require("../routeHelpers");
 
 // 1. GET /admin/dishes - Danh sách quản trị món ăn (có tìm kiếm, lọc phân loại & trạng thái)
 router.get("/", async (req, res, next) => {
@@ -91,7 +87,7 @@ router.get("/new", async (req, res, next) => {
 
     res.status(200).render("admin/dishes/new", {
       title: "Thêm Món Ăn Mới",
-      dish: { ingredients: [] },
+      dish: { available: true, ingredients: [] },
       chefs,
       ingredients,
       error: null,
@@ -102,73 +98,60 @@ router.get("/new", async (req, res, next) => {
 });
 
 // 3. POST /admin/dishes - Thêm món ăn mới (bắt buộc chọn đầu bếp & nguyên liệu)
-router.post("/", async (req, res, next) => {
-  try {
-    const { name, description, price, category, available, imageUrl, chefId, ingredientIds } = req.body;
-
-    const [chefs, ingredients] = await Promise.all([
-      prisma.chef.findMany({ orderBy: { name: "asc" } }),
-      prisma.ingredient.findMany({ orderBy: { name: "asc" } }),
-    ]);
-
-    // Validation
-    const errors = [];
-    if (!name || name.trim().length === 0) {
-      errors.push("Tên món ăn không được để trống.");
+// The validation reads and nested write share a serializable transaction.
+// This also prevents a concurrently removed ingredient from being silently omitted by set.
+function saveDish(edit) {
+  return async (req, res, next) => {
+    const id = edit ? parseValidId(req.params.id) : null;
+    if (edit && id === null) return notFound(res);
+    const loadOptions = async (db) => {
+      const [chefs, ingredients] = await Promise.all([
+        db.chef.findMany({ orderBy: { name: "asc" } }),
+        db.ingredient.findMany({ orderBy: { name: "asc" } }),
+      ]);
+      return { chefs, ingredients };
+    };
+    const renderInvalid = (validation, options) => res.status(400).render(
+      edit ? "admin/dishes/edit" : "admin/dishes/new", {
+        title: edit ? "Chỉnh Sửa Món Ăn" : "Thêm Món Ăn Mới",
+        dish: { ...validation.form, ...(edit ? { id } : {}) },
+        ...options, error: validation.errors.join(" "),
+      }
+    );
+    try {
+      let result;
+      try {
+        result = await serializable(prisma, async (db) => {
+          if (edit && !await db.dish.findUnique({ where: { id } })) return { missing: true };
+          const options = await loadOptions(db);
+          const validation = validateDish(req.body, options.chefs, options.ingredients);
+          if (validation.errors.length) return { validation, options };
+          const links = validation.ingredientIds.map(id => ({ id }));
+          const data = { ...validation.data, ingredients: edit ? { set: links } : { connect: links } };
+          const dish = edit
+            ? await db.dish.update({ where: { id }, data })
+            : await db.dish.create({ data });
+          return { dish };
+        });
+      } catch (error) {
+        // Only known relation/record errors trigger a fresh existence check.
+        // Connectivity and other system errors still go to HTTP 500.
+        if (!isPrismaError(error, ["P2003", "P2014", "P2015", "P2017", "P2018", "P2025"])) throw error;
+        if (edit && !await prisma.dish.findUnique({ where: { id } })) return notFound(res);
+        const options = await loadOptions(prisma);
+        const validation = validateDish(req.body, options.chefs, options.ingredients);
+        if (!validation.errors.length) throw error;
+        return renderInvalid(validation, options);
+      }
+      if (result.missing) return notFound(res);
+      if (result.validation) return renderInvalid(result.validation, result.options);
+      return res.redirect(303, "/admin/dishes/" + result.dish.id);
+    } catch (error) {
+      next(error);
     }
-    const numPrice = Number(price);
-    if (price === undefined || price === "" || isNaN(numPrice) || numPrice < 0) {
-      errors.push("Giá món ăn phải là một số nguyên không âm (>= 0).");
-    }
-
-    const numChefId = chefId ? Number(chefId) : null;
-    if (!numChefId || isNaN(numChefId)) {
-      errors.push("Vui lòng chọn đầu bếp phụ trách món ăn.");
-    }
-
-    const selectedIngIds = Array.isArray(ingredientIds)
-      ? ingredientIds.map(Number).filter(n => !isNaN(n) && n > 0)
-      : (ingredientIds && !isNaN(Number(ingredientIds)) ? [Number(ingredientIds)] : []);
-
-    if (selectedIngIds.length === 0) {
-      errors.push("Vui lòng chọn ít nhất một nguyên liệu cho món ăn.");
-    }
-
-    if (errors.length > 0) {
-      return res.status(400).render("admin/dishes/new", {
-        title: "Thêm Món Ăn Mới",
-        dish: {
-          ...req.body,
-          ingredients: selectedIngIds.map(id => ({ id }))
-        },
-        chefs,
-        ingredients,
-        error: errors.join(" "),
-      });
-    }
-
-    // Chống Mass Assignment: trích xuất tường minh từng trường
-    const newDish = await prisma.dish.create({
-      data: {
-        name: name.trim(),
-        description: description ? description.trim() : null,
-        price: Math.round(numPrice),
-        category: category ? category.trim() : null,
-        available: available === "on" || available === true || available === "true",
-        imageUrl: imageUrl && imageUrl.trim() ? imageUrl.trim() : null,
-        chefId: numChefId,
-        ingredients: {
-          connect: selectedIngIds.map((id) => ({ id })),
-        },
-      },
-    });
-
-    // Thao tác thành công redirect 303 sang chi tiết quản trị món ăn
-    return res.redirect(303, `/admin/dishes/${newDish.id}`);
-  } catch (error) {
-    next(error);
-  }
-});
+  };
+}
+router.post("/", saveDish(false));
 
 // 4. GET /admin/dishes/:id/edit - Mở form sửa món ăn
 router.get("/:id/edit", async (req, res, next) => {
@@ -210,94 +193,7 @@ router.get("/:id/edit", async (req, res, next) => {
 });
 
 // 5. PATCH /admin/dishes/:id - Cập nhật món ăn
-router.patch("/:id", async (req, res, next) => {
-  try {
-    const id = parseValidId(req.params.id);
-    if (!id) {
-      return res.status(404).render("404", {
-        title: "404 - Không Tìm Thấy Món Ăn",
-        message: `ID món ăn "${req.params.id}" không hợp lệ.`,
-      });
-    }
-
-    const existingDish = await prisma.dish.findUnique({
-      where: { id },
-      include: { ingredients: true },
-    });
-
-    if (!existingDish) {
-      return res.status(404).render("404", {
-        title: "404 - Không Tìm Thấy Món Ăn",
-        message: `Không tìm thấy món ăn với ID ${id} để cập nhật.`,
-      });
-    }
-
-    const { name, description, price, category, available, imageUrl, chefId, ingredientIds } = req.body;
-
-    const [chefs, ingredients] = await Promise.all([
-      prisma.chef.findMany({ orderBy: { name: "asc" } }),
-      prisma.ingredient.findMany({ orderBy: { name: "asc" } }),
-    ]);
-
-    // Validation
-    const errors = [];
-    if (!name || name.trim().length === 0) {
-      errors.push("Tên món ăn không được để trống.");
-    }
-    const numPrice = Number(price);
-    if (price === undefined || price === "" || isNaN(numPrice) || numPrice < 0) {
-      errors.push("Giá món ăn phải là một số nguyên không âm (>= 0).");
-    }
-
-    const numChefId = chefId ? Number(chefId) : null;
-    if (!numChefId || isNaN(numChefId)) {
-      errors.push("Vui lòng chọn đầu bếp phụ trách món ăn.");
-    }
-
-    const selectedIngIds = Array.isArray(ingredientIds)
-      ? ingredientIds.map(Number).filter(n => !isNaN(n) && n > 0)
-      : (ingredientIds && !isNaN(Number(ingredientIds)) ? [Number(ingredientIds)] : []);
-
-    if (selectedIngIds.length === 0) {
-      errors.push("Vui lòng chọn ít nhất một nguyên liệu cho món ăn.");
-    }
-
-    if (errors.length > 0) {
-      return res.status(400).render("admin/dishes/edit", {
-        title: `Chỉnh Sửa: ${name || existingDish.name}`,
-        dish: {
-          ...req.body,
-          id,
-          ingredients: selectedIngIds.map(id => ({ id })),
-        },
-        chefs,
-        ingredients,
-        error: errors.join(" "),
-      });
-    }
-
-    // Cập nhật món ăn và quan hệ
-    await prisma.dish.update({
-      where: { id },
-      data: {
-        name: name.trim(),
-        description: description ? description.trim() : null,
-        price: Math.round(numPrice),
-        category: category ? category.trim() : null,
-        available: available === "on" || available === true || available === "true",
-        imageUrl: imageUrl && imageUrl.trim() ? imageUrl.trim() : null,
-        chefId: numChefId,
-        ingredients: {
-          set: selectedIngIds.map((id) => ({ id })),
-        },
-      },
-    });
-
-    return res.redirect(303, `/admin/dishes/${id}`);
-  } catch (error) {
-    next(error);
-  }
-});
+router.patch("/:id", saveDish(true));
 
 // 6. GET /admin/dishes/:id/delete - Trang xác nhận xóa (200 hoặc 404)
 router.get("/:id/delete", async (req, res, next) => {
@@ -354,6 +250,7 @@ router.delete("/:id", async (req, res, next) => {
 
     return res.redirect(303, "/admin/dishes");
   } catch (error) {
+    if (isPrismaError(error, ["P2025"])) return notFound(res);
     next(error);
   }
 });
