@@ -1887,54 +1887,59 @@ ul { list-style: none; }
   }
 }
 
-/* --- Admin Filter & Search Bar --- */
+/* --- Admin Filter & Search Bar (Single Row, No Wrap) --- */
 .admin-filter-card {
   background: var(--white);
   border: 1px solid #E7E5E4;
   border-radius: var(--radius-md);
-  padding: 20px 24px;
+  padding: 16px 20px;
   margin-bottom: 24px;
   box-shadow: var(--shadow-sm);
+  overflow-x: auto;
 }
 
 .admin-filter-form {
   display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
+  flex-wrap: nowrap;
+  gap: 10px;
   align-items: flex-end;
+  width: 100%;
 }
 
 .admin-filter-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  flex: 1 1 200px;
-  min-width: 160px;
+  gap: 4px;
+  flex: 1 1 0;
+  min-width: 130px;
 }
 
 .admin-filter-field--search {
-  flex: 2 1 280px;
+  flex: 1.8 1 0;
+  min-width: 180px;
 }
 
 .admin-filter-label {
-  font-size: 0.76rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   color: var(--text-muted);
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .admin-filter-input,
 .admin-filter-select {
-  padding: 10px 14px;
-  font-size: 0.92rem;
+  padding: 8px 12px;
+  font-size: 0.88rem;
   font-family: 'Lato', sans-serif;
   border: 1.5px solid #E7E5E4;
   border-radius: var(--radius-sm);
   background: var(--white);
   color: var(--text-dark);
   transition: var(--transition);
-  height: 44px;
+  height: 40px;
+  white-space: nowrap;
 }
 
 .admin-filter-input:focus,
@@ -1946,25 +1951,31 @@ ul { list-style: none; }
 
 .admin-filter-buttons {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   align-items: flex-end;
-  margin-top: auto;
+  flex-shrink: 0;
 }
 
 .admin-filter-btn {
-  height: 44px;
-  padding: 0 20px;
+  height: 40px;
+  padding: 0 16px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   text-decoration: none;
   border: none;
   transition: var(--transition);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.data-table th,
+.data-table td {
   white-space: nowrap;
 }
 

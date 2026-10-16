@@ -131,14 +131,16 @@
                     </a>
                   </td>
                   <td>
-                    <a href="/admin/dishes/<%= dish.id %>" style="color: var(--charcoal); font-weight: 700; text-decoration: none; font-size: 1.05rem;">
-                      <%= dish.name %>
-                    </a>
-                    <% if (dish.description) { %>
-                      <div style="font-size: 0.84rem; color: var(--text-muted); margin-top: 4px; line-height: 1.4;">
-                        <%= dish.description.length > 70 ? dish.description.substring(0, 70) + '...' : dish.description %>
-                      </div>
-                    <% } %>
+                    <div style="display: flex; align-items: baseline; gap: 8px; white-space: nowrap;">
+                      <a href="/admin/dishes/<%= dish.id %>" style="color: var(--charcoal); font-weight: 700; text-decoration: none; font-size: 1.02rem;">
+                        <%= dish.name %>
+                      </a>
+                      <% if (dish.description) { %>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">
+                          — <%= dish.description.length > 40 ? dish.description.substring(0, 40) + '...' : dish.description %>
+                        </span>
+                      <% } %>
+                    </div>
                   </td>
                   <td>
                     <span class="menu-item__tag"><%= dish.category || 'Món chung' %></span>
