@@ -2006,3 +2006,227 @@ ul { list-style: none; }
   align-items: center;
   gap: 14px;
 }
+
+/* ============================================
+   MOBILE RESPONSIVE EXTENSIONS (Phones & Tablets)
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Navbar drawer layer */
+  .navbar__menu {
+    z-index: 9999;
+  }
+
+  /* Page Hero on mobile */
+  .page-hero {
+    padding: 120px 0 50px;
+  }
+  .page-hero__title {
+    font-size: clamp(1.8rem, 7vw, 2.6rem);
+  }
+  .page-hero__breadcrumb {
+    font-size: 0.85rem;
+  }
+
+  /* Admin Header */
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .admin-header div:last-child {
+    width: 100%;
+  }
+  .admin-header .btn {
+    width: 100%;
+    text-align: center;
+    display: block;
+  }
+
+  /* Admin Filter Bar: Touch-friendly vertical stack on phones */
+  .admin-filter-card {
+    padding: 16px;
+    margin-bottom: 20px;
+    overflow-x: visible;
+  }
+  .admin-filter-form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .admin-filter-field,
+  .admin-filter-field--search {
+    width: 100%;
+    flex: none;
+    min-width: 0;
+  }
+  .admin-filter-input,
+  .admin-filter-select {
+    width: 100%;
+    font-size: 0.95rem;
+  }
+  .admin-filter-buttons {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .admin-filter-buttons .admin-filter-btn {
+    flex: 1;
+    text-align: center;
+    width: 100%;
+  }
+
+  /* Data Table on Mobile with Smooth Touch Scroll */
+  .admin-table-card {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--radius-sm);
+  }
+  .data-table th,
+  .data-table td {
+    padding: 10px 12px;
+    font-size: 0.88rem;
+  }
+  .btn-xs {
+    padding: 5px 10px;
+    font-size: 0.72rem;
+  }
+
+  /* Detail Card (/dishes/:id and /admin/dishes/:id) */
+  .detail-card {
+    padding: 24px 18px;
+    margin-top: -30px;
+  }
+  .detail-layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .detail-image-box {
+    width: 100%;
+    height: 240px;
+  }
+  .detail-title {
+    font-size: 1.8rem;
+  }
+  .detail-price-text {
+    font-size: 1.7rem;
+    margin-bottom: 12px;
+  }
+  .detail-meta-list {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 16px;
+  }
+  .detail-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px !important;
+  }
+  .detail-actions .btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Admin Forms (new.ejs, edit.ejs) */
+  .form-card {
+    padding: 24px 18px;
+    margin: 0;
+  }
+  .form-title {
+    font-size: 1.6rem;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .form-actions .btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Confirm Delete Card */
+  .confirm-card {
+    padding: 24px 18px;
+    margin: 0;
+  }
+  .confirm-title {
+    font-size: 1.6rem;
+  }
+  .confirm-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  /* Customer Search Section on Phones */
+  .search-section {
+    padding: 0 4px;
+    margin-bottom: 28px;
+  }
+  .search-form {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .search-form .btn {
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+  }
+
+  /* Customer Menu Cards on Phones: Vertical Card Layout */
+  .menu-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .menu-item {
+    flex-direction: column;
+    padding: 16px;
+    gap: 14px;
+  }
+  .menu-item__image {
+    width: 100%;
+    height: 190px;
+  }
+  .menu-item__dots {
+    display: none;
+  }
+  .menu-item__header {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .menu-item__price {
+    color: var(--burgundy);
+  }
+  .menu-item__tags {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  /* Error Page */
+  .error-card {
+    padding: 30px 16px;
+  }
+  .error-badge {
+    font-size: 3.5rem;
+  }
+  .error-title {
+    font-size: 1.4rem;
+  }
+  .error-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .error-actions .btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
