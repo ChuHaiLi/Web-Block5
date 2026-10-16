@@ -40,7 +40,7 @@
               id="price" 
               name="price" 
               class="form-control" 
-              min="0" 
+              min="0" max="2147483647" step="1"
               value="<%= dish.price !== undefined ? dish.price : '' %>"
               required
             >
@@ -66,7 +66,7 @@
             <% if (typeof chefs !== 'undefined' && chefs.length > 0) { %>
               <% chefs.forEach(function(chef) { %>
                 <option value="<%= chef.id %>" <%= (typeof dish !== 'undefined' && Number(dish.chefId) === chef.id) ? 'selected' : '' %>>
-                  👨‍🍳 <%= chef.name %> — <%= chef.role || 'Đầu bếp' %> (<%= chef.specialty || 'Ẩm thực' %>)
+                  👨‍🍳 <%= chef.name %> — Đầu bếp (<%= chef.specialty || 'Ẩm thực' %>)
                 </option>
               <% }); %>
             <% } %>
@@ -146,7 +146,7 @@
             <input 
               type="checkbox" 
               name="available" 
-              <%= (dish.available === true || dish.available === 'on' || dish.available === 'true') ? 'checked' : '' %>
+              <%= dish.available === true ? 'checked' : '' %>
             >
             <span>Món ăn đang sẵn sàng phục vụ thực khách (Available)</span>
           </label>

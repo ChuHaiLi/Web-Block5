@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
@@ -138,8 +139,8 @@ async function main() {
 
 main()
   .catch((e) => {
-    console.error("Lỗi khi seed dữ liệu:", e);
-    process.exit(1);
+    console.error("Seed thất bại.", { type: e.name, code: /^P\d{4}$/.test(e.code) ? e.code : undefined });
+    process.exitCode = 1;
   })
   .finally(async () => {
     await prisma.$disconnect();

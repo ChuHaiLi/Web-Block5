@@ -2,11 +2,8 @@ const express = require("express");
 const router = express.Router();
 const prisma = require("../prisma");
 
-function parseValidId(idParam) {
-  const id = Number(idParam);
-  if (isNaN(id) || !Number.isInteger(id) || id <= 0) return null;
-  return id;
-}
+const { parseValidId, validateChef } = require("../validation");
+const { notFound, isPrismaError } = require("../routeHelpers");
 
 // 1. GET /admin/chefs - Danh sách quản trị đầu bếp
 // 1. GET /admin/chefs - Danh sách quản trị đầu bếp (có tìm kiếm q)
@@ -48,38 +45,28 @@ router.get("/new", (req, res) => {
 });
 
 // 3. POST /admin/chefs - Thêm đầu bếp mới
-router.post("/", async (req, res, next) => {
-  try {
-    const { name, specialty } = req.body;
-
-    const errors = [];
-    if (!name || name.trim().length === 0) {
-      errors.push("Tên đầu bếp không được để trống.");
+function saveChef(edit) {
+  return async (req, res, next) => {
+    try {
+      const id = edit ? parseValidId(req.params.id) : null;
+      if (edit && (id === null || !await prisma.chef.findUnique({ where: { id } }))) return notFound(res);
+      const { form, errors, data } = validateChef(req.body);
+      if (errors.length) {
+        return res.status(400).render(edit ? "admin/chefs/edit" : "admin/chefs/new", {
+          title: edit ? "Chỉnh Sửa Đầu Bếp" : "Thêm Đầu Bếp Mới",
+          chef: { ...form, ...(edit ? { id } : {}) }, error: errors.join(" "),
+        });
+      }
+      if (edit) await prisma.chef.update({ where: { id }, data });
+      else await prisma.chef.create({ data });
+      return res.redirect(303, "/admin/chefs");
+    } catch (error) {
+      if (edit && isPrismaError(error, ["P2025"])) return notFound(res);
+      next(error);
     }
-    if (!specialty || specialty.trim().length === 0) {
-      errors.push("Sở trường / chuyên môn không được để trống.");
-    }
-
-    if (errors.length > 0) {
-      return res.status(400).render("admin/chefs/new", {
-        title: "Thêm Đầu Bếp Mới",
-        chef: req.body,
-        error: errors.join(" "),
-      });
-    }
-
-    await prisma.chef.create({
-      data: {
-        name: name.trim(),
-        specialty: specialty.trim(),
-      },
-    });
-
-    return res.redirect(303, "/admin/chefs");
-  } catch (error) {
-    next(error);
-  }
-});
+  };
+}
+router.post("/", saveChef(false));
 
 // 4. GET /admin/chefs/:id/edit - Mở form sửa đầu bếp
 router.get("/:id/edit", async (req, res, next) => {
@@ -111,54 +98,7 @@ router.get("/:id/edit", async (req, res, next) => {
 });
 
 // 5. PATCH /admin/chefs/:id - Cập nhật đầu bếp qua Method Override
-router.patch("/:id", async (req, res, next) => {
-  try {
-    const id = parseValidId(req.params.id);
-    if (!id) {
-      return res.status(404).render("404", {
-        title: "404 - Không Tìm Thấy Đầu Bếp",
-        message: `ID đầu bếp "${req.params.id}" không hợp lệ.`,
-      });
-    }
-
-    const existingChef = await prisma.chef.findUnique({ where: { id } });
-    if (!existingChef) {
-      return res.status(404).render("404", {
-        title: "404 - Không Tìm Thấy Đầu Bếp",
-        message: `Không tìm thấy đầu bếp với ID ${id}.`,
-      });
-    }
-
-    const { name, specialty } = req.body;
-    const errors = [];
-    if (!name || name.trim().length === 0) {
-      errors.push("Tên đầu bếp không được để trống.");
-    }
-    if (!specialty || specialty.trim().length === 0) {
-      errors.push("Sở trường / chuyên môn không được để trống.");
-    }
-
-    if (errors.length > 0) {
-      return res.status(400).render("admin/chefs/edit", {
-        title: `Chỉnh Sửa: ${name || existingChef.name}`,
-        chef: { ...req.body, id },
-        error: errors.join(" "),
-      });
-    }
-
-    await prisma.chef.update({
-      where: { id },
-      data: {
-        name: name.trim(),
-        specialty: specialty.trim(),
-      },
-    });
-
-    return res.redirect(303, "/admin/chefs");
-  } catch (error) {
-    next(error);
-  }
-});
+router.patch("/:id", saveChef(true));
 
 // 6. GET /admin/chefs/:id/delete - Trang xác nhận xóa đầu bếp
 router.get("/:id/delete", async (req, res, next) => {
@@ -211,6 +151,7 @@ router.delete("/:id", async (req, res, next) => {
 
     return res.redirect(303, "/admin/chefs");
   } catch (error) {
+    if (isPrismaError(error, ["P2025"])) return notFound(res);
     next(error);
   }
 });
