@@ -13,8 +13,7 @@
         <div class="target-title"><%= ingredient.name %></div>
         <div class="target-meta">
           <span>Mã nguyên liệu: #<%= ingredient.id %></span>
-          <span>•</span>
-          <span>Đơn vị tính: <%= ingredient.unit %></span>
+          <span>Số lượng: <%= ingredient.quantity || 0 %> <%= ingredient.unit %></span>
         </div>
       </div>
 

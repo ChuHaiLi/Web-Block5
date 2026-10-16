@@ -31,16 +31,31 @@
           >
         </div>
 
-        <div class="form-group">
-          <label for="unit" class="form-label required">Đơn Vị Tính:</label>
-          <input 
-            type="text" 
-            id="unit" 
-            name="unit" 
-            class="form-control" 
-            value="<%= ingredient.unit || '' %>"
-            required
-          >
+        <div class="form-row">
+          <div class="form-group">
+            <label for="quantity" class="form-label required">Số Lượng:</label>
+            <input 
+              type="number" 
+              id="quantity" 
+              name="quantity" 
+              min="0"
+              class="form-control" 
+              value="<%= ingredient.quantity !== undefined ? ingredient.quantity : 0 %>"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="unit" class="form-label required">Đơn Vị Tính:</label>
+            <input 
+              type="text" 
+              id="unit" 
+              name="unit" 
+              class="form-control" 
+              value="<%= ingredient.unit || '' %>"
+              required
+            >
+          </div>
         </div>
 
         <div class="form-actions">

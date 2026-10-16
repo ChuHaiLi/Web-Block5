@@ -92,14 +92,14 @@ async function main() {
   // 3. Seed Nguyên liệu (Ingredients)
   const ingredients = await prisma.ingredient.createMany({
     data: [
-      { name: "Bánh phở tươi", unit: "kg" },
-      { name: "Thịt thăn bò Úc", unit: "kg" },
-      { name: "Sườn heo non", unit: "kg" },
-      { name: "Gạo tấm thơm", unit: "kg" },
-      { name: "Tôm sú tươi", unit: "kg" },
-      { name: "Hạt sen Huế", unit: "gam" },
-      { name: "Nước mắm cá cơm", unit: "lít" },
-      { name: "Rau quế và rau thơm các loại", unit: "bó" },
+      { name: "Bánh phở tươi", quantity: 25, unit: "kg" },
+      { name: "Thịt thăn bò Úc", quantity: 15, unit: "kg" },
+      { name: "Sườn heo non", quantity: 20, unit: "kg" },
+      { name: "Gạo tấm thơm", quantity: 50, unit: "kg" },
+      { name: "Tôm sú tươi", quantity: 12, unit: "kg" },
+      { name: "Hạt sen Huế", quantity: 5000, unit: "gam" },
+      { name: "Nước mắm cá cơm", quantity: 30, unit: "lít" },
+      { name: "Rau quế và rau thơm các loại", quantity: 40, unit: "bó" },
     ],
   });
 

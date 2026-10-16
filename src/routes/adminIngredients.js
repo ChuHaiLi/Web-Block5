@@ -50,11 +50,15 @@ router.get("/new", (req, res) => {
 // 3. POST /admin/ingredients - Thêm nguyên liệu mới
 router.post("/", async (req, res, next) => {
   try {
-    const { name, unit } = req.body;
+    const { name, quantity, unit } = req.body;
 
     const errors = [];
     if (!name || name.trim().length === 0) {
       errors.push("Tên nguyên liệu không được để trống.");
+    }
+    const numQty = quantity !== undefined && quantity !== "" ? Number(quantity) : 0;
+    if (isNaN(numQty) || numQty < 0) {
+      errors.push("Số lượng nguyên liệu phải là một số không âm (>= 0).");
     }
     if (!unit || unit.trim().length === 0) {
       errors.push("Đơn vị tính không được để trống.");
@@ -71,6 +75,7 @@ router.post("/", async (req, res, next) => {
     await prisma.ingredient.create({
       data: {
         name: name.trim(),
+        quantity: Math.round(numQty),
         unit: unit.trim(),
       },
     });
@@ -129,10 +134,14 @@ router.patch("/:id", async (req, res, next) => {
       });
     }
 
-    const { name, unit } = req.body;
+    const { name, quantity, unit } = req.body;
     const errors = [];
     if (!name || name.trim().length === 0) {
       errors.push("Tên nguyên liệu không được để trống.");
+    }
+    const numQty = quantity !== undefined && quantity !== "" ? Number(quantity) : (existingIngredient.quantity || 0);
+    if (isNaN(numQty) || numQty < 0) {
+      errors.push("Số lượng nguyên liệu phải là một số không âm (>= 0).");
     }
     if (!unit || unit.trim().length === 0) {
       errors.push("Đơn vị tính không được để trống.");
@@ -150,6 +159,7 @@ router.patch("/:id", async (req, res, next) => {
       where: { id },
       data: {
         name: name.trim(),
+        quantity: Math.round(numQty),
         unit: unit.trim(),
       },
     });
