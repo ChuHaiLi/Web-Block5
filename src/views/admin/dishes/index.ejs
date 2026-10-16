@@ -131,13 +131,13 @@
                     </a>
                   </td>
                   <td>
-                    <div style="display: flex; align-items: baseline; gap: 8px; white-space: nowrap;">
-                      <a href="/admin/dishes/<%= dish.id %>" style="color: var(--charcoal); font-weight: 700; text-decoration: none; font-size: 1.02rem;">
+                    <div style="display: flex; align-items: baseline; gap: 6px; white-space: nowrap;">
+                      <a href="/admin/dishes/<%= dish.id %>" style="color: var(--charcoal); font-weight: 700; text-decoration: none; font-size: 0.96rem;">
                         <%= dish.name %>
                       </a>
                       <% if (dish.description) { %>
-                        <span style="font-size: 0.82rem; color: var(--text-muted);">
-                          — <%= dish.description.length > 40 ? dish.description.substring(0, 40) + '...' : dish.description %>
+                        <span title="<%= dish.description %>" style="font-size: 0.8rem; color: var(--text-muted); max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; vertical-align: bottom;">
+                          — <%= dish.description %>
                         </span>
                       <% } %>
                     </div>

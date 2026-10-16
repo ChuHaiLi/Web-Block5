@@ -1588,15 +1588,15 @@ ul { list-style: none; }
   color: var(--cream);
   font-size: 0.8rem;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-  padding: 16px 20px;
+  letter-spacing: 1px;
+  padding: 12px 14px;
   font-weight: 700;
 }
 
 .data-table td {
-  padding: 18px 20px;
+  padding: 10px 14px;
   border-bottom: 1px solid #E7E5E4;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   color: var(--text-dark);
   vertical-align: middle;
 }
@@ -1991,12 +1991,12 @@ ul { list-style: none; }
 }
 
 .dish-thumb {
-  width: 52px;
-  height: 52px;
-  border-radius: 8px;
+  width: 42px;
+  height: 42px;
+  border-radius: 6px;
   object-fit: cover;
   border: 1px solid #E7E5E4;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   background: var(--cream);
   display: block;
 }
