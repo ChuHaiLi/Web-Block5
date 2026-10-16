@@ -34,16 +34,6 @@
           <% } %>
         </div>
       </form>
-      <div class="admin-filter-summary">
-        <div>
-          Hiển thị <strong><%= chefs.length %></strong> đầu bếp (trên tổng số <strong><%= typeof totalCount !== 'undefined' ? totalCount : chefs.length %></strong> đầu bếp)
-        </div>
-        <% if (typeof q !== 'undefined' && q) { %>
-          <div style="font-size: 0.82rem; color: var(--gold-dark, #b45309);">
-            * Kết quả tìm kiếm cho từ khóa: "<%= q %>"
-          </div>
-        <% } %>
-      </div>
     </div>
 
     <div class="admin-table-card">

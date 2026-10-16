@@ -75,18 +75,6 @@
           <% } %>
         </div>
       </form>
-
-      <!-- Dòng trạng thái tổng kết kết quả lọc -->
-      <div class="admin-filter-summary">
-        <div>
-          Hiển thị <strong><%= dishes.length %></strong> món ăn (trên tổng số <strong><%= typeof totalCount !== 'undefined' ? totalCount : dishes.length %></strong> món trong hệ thống)
-        </div>
-        <% if (hasFilter) { %>
-          <div style="font-size: 0.82rem; color: var(--gold-dark, #b45309);">
-            * Đang áp dụng bộ lọc tùy chỉnh
-          </div>
-        <% } %>
-      </div>
     </div>
 
     <!-- Bảng danh sách món ăn -->
