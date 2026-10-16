@@ -16,6 +16,10 @@ router.get("/", async (req, res, next) => {
             },
           }
         : {},
+      include: {
+        chef: true,
+        ingredients: true,
+      },
       orderBy: { id: "asc" },
     });
 
@@ -44,6 +48,10 @@ router.get("/:id", async (req, res, next) => {
 
     const dish = await prisma.dish.findUnique({
       where: { id },
+      include: {
+        chef: true,
+        ingredients: true,
+      },
     });
 
     if (!dish) {

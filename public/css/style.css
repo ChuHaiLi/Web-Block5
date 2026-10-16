@@ -2228,5 +2228,10 @@ ul { list-style: none; }
     width: 100%;
     text-align: center;
   }
+
+  /* Ingredients checkbox grid on small screens */
+  .ingredients-checkbox-grid {
+    grid-template-columns: 1fr !important;
+  }
 }
 

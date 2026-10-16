@@ -60,7 +60,50 @@
               <div class="meta-label">Tình Trạng Bếp</div>
               <div class="meta-value"><%= dish.available ? 'Sẵn sàng phục vụ' : 'Tạm dừng nhận order' %></div>
             </div>
+            <div>
+              <div class="meta-label">Đầu Bếp Phụ Trách</div>
+              <div class="meta-value">
+                <% if (dish.chef) { %>
+                  👨‍🍳 <strong><%= dish.chef.name %></strong>
+                  <small style="color: var(--text-muted); display: block; font-size: 0.8rem;"><%= dish.chef.role || 'Đầu bếp' %></small>
+                <% } else { %>
+                  <em>Bếp trưởng Restoran</em>
+                <% } %>
+              </div>
+            </div>
           </div>
+
+          <!-- Thành phần nguyên liệu -->
+          <div style="margin: 20px 0; padding: 18px; background: var(--cream); border-radius: var(--radius-sm); border: 1px solid #E7E5E4;">
+            <h4 style="font-size: 0.88rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dark); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+              <span>🥗</span> Thành Phần & Nguyên Liệu Chính
+            </h4>
+            <% if (dish.ingredients && dish.ingredients.length > 0) { %>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <% dish.ingredients.forEach(function(ing) { %>
+                  <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--white); border: 1px solid #D6D3D1; border-radius: 20px; font-size: 0.88rem; color: var(--charcoal); font-weight: 500;">
+                    <span style="color: var(--burgundy);">✔</span> <%= ing.name %>
+                  </span>
+                <% }); %>
+              </div>
+            <% } else { %>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">Nguyên liệu tươi sạch được tuyển chọn theo tiêu chuẩn nhà hàng.</p>
+            <% } %>
+          </div>
+
+          <!-- Thông tin đầu bếp chế biến -->
+          <% if (dish.chef) { %>
+            <div style="margin: 16px 0 24px; padding: 16px 18px; background: var(--white); border-radius: var(--radius-sm); border: 1px solid #E7E5E4; display: flex; align-items: center; gap: 16px;">
+              <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--burgundy); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0;">
+                👨‍🍳
+              </div>
+              <div>
+                <div style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px; color: var(--gold-dark); font-weight: 700;">Nghệ Nhân Bếp Chính</div>
+                <div style="font-weight: 700; font-size: 1.05rem; color: var(--charcoal);"><%= dish.chef.name %></div>
+                <div style="font-size: 0.85rem; color: var(--text-muted);"><%= dish.chef.role || 'Đầu bếp' %> • Sở trường: <%= dish.chef.specialty || 'Ẩm thực truyền thống' %></div>
+              </div>
+            </div>
+          <% } %>
 
           <div class="detail-actions" style="margin-top: 10px;">
             <a href="/dishes" class="btn btn--primary">← Quay Lại Thực Đơn</a>

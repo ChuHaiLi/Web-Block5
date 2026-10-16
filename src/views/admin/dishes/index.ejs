@@ -87,6 +87,8 @@
               <th style="width: 80px; text-align: center;">Hình Ảnh</th>
               <th>Tên Món Ăn & Mô Tả</th>
               <th>Phân Loại</th>
+              <th>Đầu Bếp</th>
+              <th style="text-align: center;">Nguyên Liệu</th>
               <th>Đơn Giá</th>
               <th>Trạng Thái</th>
               <th style="width: 220px; text-align: center;">Hành Động</th>
@@ -95,7 +97,7 @@
           <tbody>
             <% if (dishes.length === 0) { %>
               <tr>
-                <td colspan="7" style="text-align: center; padding: 50px 20px;">
+                <td colspan="9" style="text-align: center; padding: 50px 20px;">
                   <div style="font-size: 1.1rem; color: var(--text-dark); margin-bottom: 8px;">Không tìm thấy món ăn nào phù hợp với bộ lọc.</div>
                   <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">Vui lòng thử điều chỉnh lại từ khóa hoặc xóa bớt tiêu chí lọc.</p>
                   <a href="/admin/dishes" class="btn btn--outline" style="color: var(--charcoal); font-size: 0.8rem;">Xóa Bộ Lọc</a>
@@ -132,6 +134,17 @@
                   </td>
                   <td>
                     <span class="menu-item__tag"><%= dish.category || 'Món chung' %></span>
+                  </td>
+                  <td>
+                    <span style="font-size: 0.9rem; font-weight: 600; color: var(--charcoal); white-space: nowrap;">
+                      <%= dish.chef ? '👨‍🍳 ' + dish.chef.name : '—' %>
+                    </span>
+                  </td>
+                  <td style="text-align: center;">
+                    <% const ingNames = dish.ingredients ? dish.ingredients.map(i => i.name).join(', ') : ''; %>
+                    <span class="menu-item__tag menu-item__tag--unit" title="<%= ingNames %>" style="white-space: nowrap; cursor: help;">
+                      <%= dish.ingredients ? dish.ingredients.length : 0 %> loại
+                    </span>
                   </td>
                   <td><strong style="color: var(--burgundy); font-family: 'Cormorant Garamond', serif; font-size: 1.25rem;"><%= dish.price.toLocaleString('vi-VN') %> đ</strong></td>
                   <td>

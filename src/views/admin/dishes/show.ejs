@@ -60,6 +60,35 @@
               <div class="meta-label">Tình Trạng Bếp</div>
               <div class="meta-value"><%= dish.available ? 'Sẵn sàng phục vụ' : 'Tạm dừng nhận order' %></div>
             </div>
+            <div>
+              <div class="meta-label">Đầu Bếp Phụ Trách</div>
+              <div class="meta-value">
+                <% if (dish.chef) { %>
+                  👨‍🍳 <strong><%= dish.chef.name %></strong> <small style="color: var(--text-muted); display: block; font-size: 0.8rem;"><%= dish.chef.role || 'Đầu bếp' %> (<%= dish.chef.specialty || 'Ẩm thực' %>)</small>
+                <% } else { %>
+                  <em>Chưa chỉ định</em>
+                <% } %>
+              </div>
+            </div>
+          </div>
+
+          <!-- Danh sách nguyên liệu -->
+          <div style="margin: 18px 0; padding: 16px 18px; background: var(--cream); border-radius: var(--radius-sm); border: 1px solid #E7E5E4;">
+            <h4 style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dark); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+              <span>🥗</span> Danh Sách Nguyên Liệu Chế Biến (<%= dish.ingredients ? dish.ingredients.length : 0 %>)
+            </h4>
+            <% if (dish.ingredients && dish.ingredients.length > 0) { %>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <% dish.ingredients.forEach(function(ing) { %>
+                  <span style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: var(--white); border: 1px solid #D6D3D1; border-radius: 20px; font-size: 0.86rem; color: var(--charcoal);">
+                    <strong style="color: var(--burgundy);"><%= ing.name %></strong>
+                    <span style="font-size: 0.78rem; color: var(--text-muted);">(Tồn: <%= (ing.quantity || 0).toLocaleString('vi-VN') %> <%= ing.unit %>)</span>
+                  </span>
+                <% }); %>
+              </div>
+            <% } else { %>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">Chưa liên kết nguyên liệu nào cho món ăn này.</p>
+            <% } %>
           </div>
 
           <!-- Các nút thao tác trong chế độ Quản Trị -->

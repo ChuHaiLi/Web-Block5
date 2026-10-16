@@ -61,6 +61,56 @@
           </div>
         </div>
 
+        <!-- Chọn Đầu Bếp Phụ Trách -->
+        <div class="form-group">
+          <label for="chefId" class="form-label required">Đầu Bếp Phụ Trách (Chef):</label>
+          <select id="chefId" name="chefId" class="form-control" required>
+            <option value="">-- Chọn đầu bếp phụ trách món ăn --</option>
+            <% if (typeof chefs !== 'undefined' && chefs.length > 0) { %>
+              <% chefs.forEach(function(chef) { %>
+                <option value="<%= chef.id %>" <%= (typeof dish !== 'undefined' && Number(dish.chefId) === chef.id) ? 'selected' : '' %>>
+                  👨‍🍳 <%= chef.name %> — <%= chef.role || 'Đầu bếp' %> (<%= chef.specialty || 'Ẩm thực' %>)
+                </option>
+              <% }); %>
+            <% } %>
+          </select>
+          <small style="color: var(--text-muted); font-size: 0.8rem; margin-top: 4px; display: block;">Mỗi món ăn bắt buộc phải có một đầu bếp đảm nhiệm chế biến.</small>
+        </div>
+
+        <!-- Chọn Danh Sách Nguyên Liệu -->
+        <div class="form-group">
+          <label class="form-label required">Danh Sách Nguyên Liệu (Chọn ít nhất 1 loại):</label>
+          <% 
+            const selectedIngIds = (typeof dish !== 'undefined' && dish.ingredients) 
+              ? dish.ingredients.map(i => Number(i.id || i)) 
+              : []; 
+          %>
+          <div class="ingredients-checkbox-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; max-height: 240px; overflow-y: auto; padding: 12px; background: var(--cream); border: 2px solid #E7E5E4; border-radius: var(--radius-sm);">
+            <% if (typeof ingredients !== 'undefined' && ingredients.length > 0) { %>
+              <% ingredients.forEach(function(ing) { 
+                   const isChecked = selectedIngIds.includes(ing.id);
+              %>
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer; padding: 8px 10px; background: var(--white); border-radius: 4px; border: 1px solid <%= isChecked ? 'var(--burgundy)' : '#E7E5E4' %>; text-transform: none; letter-spacing: normal; font-weight: 400; margin-bottom: 0;">
+                  <input 
+                    type="checkbox" 
+                    name="ingredientIds" 
+                    value="<%= ing.id %>" 
+                    <%= isChecked ? 'checked' : '' %>
+                    style="width: 16px; height: 16px; accent-color: var(--burgundy); margin: 0; cursor: pointer;"
+                  >
+                  <span style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    <strong><%= ing.name %></strong>
+                    <small style="color: var(--text-muted); display: block; font-size: 0.75rem;"><%= (ing.quantity || 0).toLocaleString('vi-VN') %> <%= ing.unit %></small>
+                  </span>
+                </label>
+              <% }); %>
+            <% } else { %>
+              <p style="color: var(--text-muted); font-size: 0.85rem; padding: 8px;">Chưa có nguyên liệu nào trong hệ thống.</p>
+            <% } %>
+          </div>
+          <small style="color: var(--text-muted); font-size: 0.8rem; margin-top: 4px; display: block;">Tích chọn các nguyên liệu cấu thành nên món ăn này.</small>
+        </div>
+
         <div class="form-group">
           <label for="imageUrl" class="form-label">Đường Dẫn Hình Ảnh (URL hoặc /assets/img/dishes/...):</label>
           <input 

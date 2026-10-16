@@ -1,34 +1,96 @@
 <%- include('../../partials/header', { title: `Xác Nhận Xóa: ${ingredient.name} - RESTORAN` }) %>
 <%- include('../../partials/navbar') %>
 
+<% const hasDishes = ingredient.dishes && ingredient.dishes.length > 0; %>
+
 <section class="section" style="padding-top: 120px;">
   <div class="container">
-    <div class="confirm-card">
-      <h1 class="confirm-title">Xác Nhận Xóa Nguyên Liệu</h1>
-      <p class="confirm-subtitle">
-        Bạn có chắc chắn muốn xóa nguyên liệu này khỏi cơ sở dữ liệu Supabase không?
-      </p>
+    <div class="confirm-card" style="max-width: <%= hasDishes ? '720px' : '560px' %>;">
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger" role="alert" style="margin-bottom: 24px;">
+          <div class="alert-content">
+            <strong>Ràng Buộc Dữ Liệu:</strong>
+            <p><%= error %></p>
+          </div>
+        </div>
+      <% } %>
 
-      <div class="confirm-target-box">
+      <h1 class="confirm-title" style="<%= hasDishes ? 'color: var(--burgundy);' : '' %>">
+        <%= hasDishes ? '⚠️ Không Thể Xóa Nguyên Liệu Này' : 'Xác Nhận Xóa Nguyên Liệu' %>
+      </h1>
+
+      <div class="confirm-target-box" style="margin-top: 20px;">
         <div class="target-title"><%= ingredient.name %></div>
         <div class="target-meta">
           <span>Mã nguyên liệu: #<%= ingredient.id %></span>
-          <span>Số lượng: <%= ingredient.quantity || 0 %> <%= ingredient.unit %></span>
+          <span>Tồn kho: <%= (ingredient.quantity || 0).toLocaleString('vi-VN') %> <%= ingredient.unit %></span>
         </div>
       </div>
 
-      <div class="confirm-warning-note">
-        Lưu ý: Thao tác này sẽ xóa vĩnh viễn dữ liệu và không thể hoàn tác sau khi đã thực hiện.
-      </div>
+      <% if (hasDishes) { %>
+        <div style="background: rgba(127, 29, 29, 0.06); border: 1px solid rgba(127, 29, 29, 0.2); border-radius: var(--radius-sm); padding: 18px 20px; margin: 24px 0;">
+          <h4 style="color: var(--burgundy); margin-bottom: 8px; font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
+            <span>🛡️</span> Ràng Buộc Toàn Vẹn: Đang có <%= ingredient.dishes.length %> món ăn sử dụng
+          </h4>
+          <p style="font-size: 0.92rem; color: var(--text-dark); line-height: 1.6; margin-bottom: 14px;">
+            Hệ thống bảo vệ thực đơn: Bạn không thể xóa <strong><%= ingredient.name %></strong> vì các món ăn sau đây đang yêu cầu nguyên liệu này để chế biến:
+          </p>
 
-      <form action="/admin/ingredients/<%= ingredient.id %>?_method=DELETE" method="POST" class="confirm-actions">
-        <button type="submit" class="btn btn--primary" style="background: var(--burgundy); color: #fff; width: 100%;">
-          Xác Nhận Xóa Vĩnh Viễn
-        </button>
-        <a href="/admin/ingredients" class="btn btn--ghost" style="width: 100%; text-align: center;">
-          Hủy Bỏ và Quay Lại
-        </a>
-      </form>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <% ingredient.dishes.forEach(function(dish) { 
+                 const fallbackImg = '/assets/img/food-' + (((dish.id - 1) % 6) + 1) + '.svg';
+                 const displayImg = dish.imageUrl || fallbackImg;
+            %>
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--white); padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid #E7E5E4;">
+                <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">
+                  <img 
+                    src="<%= displayImg %>" 
+                    alt="<%= dish.name %>" 
+                    style="width: 38px; height: 38px; border-radius: 4px; object-fit: cover; flex-shrink: 0;"
+                    onerror="this.onerror=null; this.src='<%= fallbackImg %>';"
+                  >
+                  <div style="min-width: 0;">
+                    <a href="/admin/dishes/<%= dish.id %>" style="font-weight: 700; color: var(--charcoal); text-decoration: none; font-size: 0.95rem; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                      <%= dish.name %>
+                    </a>
+                    <span class="menu-item__tag" style="font-size: 0.7rem; padding: 2px 6px;"><%= dish.category || 'Món chung' %></span>
+                  </div>
+                </div>
+                <a href="/admin/dishes/<%= dish.id %>/edit" class="btn-xs btn-xs-edit" style="flex-shrink: 0;" target="_blank">
+                  Sửa Món ↗
+                </a>
+              </div>
+            <% }); %>
+          </div>
+
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 14px; line-height: 1.5;">
+            💡 <em>Hướng dẫn:</em> Hãy vào chỉnh sửa các món ăn nêu trên, bỏ chọn nguyên liệu "<strong><%= ingredient.name %></strong>" và lưu lại. Khi không còn món ăn nào sử dụng, bạn sẽ có thể xóa nguyên liệu này.
+          </p>
+        </div>
+
+        <div class="confirm-actions" style="margin-top: 24px;">
+          <a href="/admin/ingredients" class="btn btn--primary" style="width: 100%; text-align: center;">
+            ← Quay Lại Danh Sách Kho Nguyên Liệu
+          </a>
+        </div>
+      <% } else { %>
+        <p class="confirm-subtitle" style="margin-top: 16px;">
+          Nguyên liệu này hiện <strong>không có món ăn nào đang sử dụng</strong>. Bạn có chắc chắn muốn xóa nguyên liệu này khỏi cơ sở dữ liệu Supabase không?
+        </p>
+
+        <div class="confirm-warning-note" style="margin: 20px 0;">
+          Lưu ý: Thao tác này sẽ xóa vĩnh viễn dữ liệu và không thể hoàn tác sau khi đã thực hiện.
+        </div>
+
+        <form action="/admin/ingredients/<%= ingredient.id %>?_method=DELETE" method="POST" class="confirm-actions">
+          <button type="submit" class="btn btn--primary" style="background: var(--burgundy); color: #fff; width: 100%;">
+            Xác Nhận Xóa Vĩnh Viễn
+          </button>
+          <a href="/admin/ingredients" class="btn btn--ghost" style="width: 100%; text-align: center;">
+            Hủy Bỏ và Quay Lại
+          </a>
+        </form>
+      <% } %>
     </div>
   </div>
 </section>

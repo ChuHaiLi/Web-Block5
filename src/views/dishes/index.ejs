@@ -74,6 +74,16 @@
               <p class="menu-item__desc">
                 <%= dish.description ? dish.description : 'Món ăn đặc sản mang đậm phong vị ẩm thực truyền thống.' %>
               </p>
+              <% if (dish.chef || (dish.ingredients && dish.ingredients.length > 0)) { %>
+                <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+                  <% if (dish.chef) { %>
+                    <span style="color: var(--burgundy); font-weight: 600;">👨‍🍳 <%= dish.chef.name %></span>
+                  <% } %>
+                  <% if (dish.ingredients && dish.ingredients.length > 0) { %>
+                    <span>• 🥗 <%= dish.ingredients.slice(0, 3).map(i => i.name).join(', ') %><%= dish.ingredients.length > 3 ? '...' : '' %></span>
+                  <% } %>
+                </div>
+              <% } %>
               <div class="menu-item__tags">
                 <% if (dish.category) { %>
                   <span class="menu-item__tag"><%= dish.category %></span>

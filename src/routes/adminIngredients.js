@@ -23,7 +23,13 @@ router.get("/", async (req, res, next) => {
       : {};
 
     const [ingredients, totalCount] = await Promise.all([
-      prisma.ingredient.findMany({ where, orderBy: { id: "asc" } }),
+      prisma.ingredient.findMany({
+        where,
+        include: {
+          _count: { select: { dishes: true } },
+        },
+        orderBy: { id: "asc" },
+      }),
       prisma.ingredient.count(),
     ]);
 
@@ -181,7 +187,16 @@ router.get("/:id/delete", async (req, res, next) => {
       });
     }
 
-    const ingredient = await prisma.ingredient.findUnique({ where: { id } });
+    const ingredient = await prisma.ingredient.findUnique({
+      where: { id },
+      include: {
+        dishes: {
+          select: { id: true, name: true, category: true, imageUrl: true },
+          orderBy: { name: "asc" },
+        },
+      },
+    });
+
     if (!ingredient) {
       return res.status(404).render("404", {
         title: "404 - Không Tìm Thấy Nguyên Liệu",
@@ -192,6 +207,7 @@ router.get("/:id/delete", async (req, res, next) => {
     res.status(200).render("admin/ingredients/delete", {
       title: `Xác Nhận Xóa: ${ingredient.name}`,
       ingredient,
+      error: null,
     });
   } catch (error) {
     next(error);
@@ -209,11 +225,29 @@ router.delete("/:id", async (req, res, next) => {
       });
     }
 
-    const ingredient = await prisma.ingredient.findUnique({ where: { id } });
+    const ingredient = await prisma.ingredient.findUnique({
+      where: { id },
+      include: {
+        dishes: {
+          select: { id: true, name: true, category: true, imageUrl: true },
+          orderBy: { name: "asc" },
+        },
+      },
+    });
+
     if (!ingredient) {
       return res.status(404).render("404", {
         title: "404 - Không Tìm Thấy Nguyên Liệu",
         message: `Không tìm thấy nguyên liệu với ID ${id} để xóa.`,
+      });
+    }
+
+    // Kiểm tra ràng buộc toàn vẹn dữ liệu: Không cho xóa nếu đang có món ăn sử dụng
+    if (ingredient.dishes && ingredient.dishes.length > 0) {
+      return res.status(400).render("admin/ingredients/delete", {
+        title: `Không Thể Xóa: ${ingredient.name}`,
+        ingredient,
+        error: `Không thể xóa nguyên liệu "${ingredient.name}" vì đang được sử dụng trong ${ingredient.dishes.length} món ăn! Vui lòng gỡ bỏ nguyên liệu này khỏi các món ăn trước.`,
       });
     }
 
