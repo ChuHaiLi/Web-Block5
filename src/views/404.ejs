@@ -1,0 +1,31 @@
+<%- include('partials/header', { title: title || '404 - Không Tìm Thấy - RESTORAN' }) %>
+<%- include('partials/navbar') %>
+
+<!-- Page Hero Section -->
+<section class="page-hero">
+  <div class="page-hero__bg">
+    <img src="/assets/img/menu-bg.svg" alt="404 Error">
+  </div>
+  <div class="page-hero__overlay"></div>
+  <div class="container page-hero__content">
+    <h1 class="page-hero__title">404 - Không Tìm Thấy</h1>
+    <p class="page-hero__breadcrumb"><a href="/dishes">Trang Chủ</a> &nbsp;/&nbsp; Lỗi</p>
+  </div>
+</section>
+
+<!-- Error Section -->
+<section class="section">
+  <div class="container">
+    <div class="error-card">
+      <div class="error-badge">404</div>
+      <h2 class="error-title"><%= title || "Tài Nguyên Không Tồn Tại" %></h2>
+      <p class="error-desc"><%= message || "Tài nguyên bạn đang tìm kiếm không tồn tại trên hệ thống hoặc ID cung cấp không hợp lệ." %></p>
+      <div class="error-actions">
+        <a href="/dishes" class="btn btn--primary">← Về Thực Đơn Nhà Hàng</a>
+        <a href="/admin/dishes" class="btn btn--ghost">Về Cổng Quản Trị</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,56 @@
+<%- include('../../partials/header', { title: 'Thêm Đầu Bếp Mới - RESTORAN' }) %>
+<%- include('../../partials/navbar') %>
+
+<section class="section" style="padding-top: 120px;">
+  <div class="container">
+    <div class="form-card">
+      <div class="form-header">
+        <h1 class="form-title">Thêm Đầu Bếp Mới</h1>
+        <p class="form-subtitle">Điền thông tin đầu bếp hoặc bếp trưởng vào hệ thống cơ sở dữ liệu.</p>
+      </div>
+
+      <% if (error) { %>
+        <div class="alert alert-danger" role="alert">
+          <div class="alert-content">
+            <strong>Lỗi xác thực dữ liệu (HTTP 400 Bad Request):</strong>
+            <p><%= error %></p>
+          </div>
+        </div>
+      <% } %>
+
+      <form action="/admin/chefs" method="POST" class="standard-form">
+        <div class="form-group">
+          <label for="name" class="form-label required">Họ Và Tên Đầu Bếp:</label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name" 
+            class="form-control" 
+            placeholder="Ví dụ: Nguyễn Văn Hải" 
+            value="<%= typeof chef !== 'undefined' && chef.name ? chef.name : '' %>"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="specialty" class="form-label required">Sở Trường / Chuyên Môn Ẩm Thực:</label>
+          <textarea 
+            id="specialty" 
+            name="specialty" 
+            class="form-control" 
+            rows="3" 
+            placeholder="Ví dụ: Bếp trưởng món nướng than hoa, 15 năm kinh nghiệm ẩm thực truyền thống..." 
+            required
+          ><%= typeof chef !== 'undefined' && chef.specialty ? chef.specialty : '' %></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn--primary">Lưu Đầu Bếp</button>
+          <a href="/admin/chefs" class="btn btn--ghost">Hủy Bỏ</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<%- include('../../partials/footer') %>

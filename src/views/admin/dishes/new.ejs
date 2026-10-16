@@ -1,0 +1,107 @@
+<%- include('../../partials/header', { title: 'Thêm Món Ăn Mới - RESTORAN' }) %>
+<%- include('../../partials/navbar') %>
+
+<section class="section" style="padding-top: 120px;">
+  <div class="container">
+    <div class="form-card">
+      <div class="form-header">
+        <h1 class="form-title">Thêm Món Ăn Mới</h1>
+        <p class="form-subtitle">Điền đầy đủ thông tin món ăn vào biểu mẫu dưới đây để lưu vào cơ sở dữ liệu.</p>
+      </div>
+
+      <% if (error) { %>
+        <div class="alert alert-danger" role="alert">
+          <div class="alert-content">
+            <strong>Lỗi xác thực dữ liệu (HTTP 400 Bad Request):</strong>
+            <p><%= error %></p>
+          </div>
+        </div>
+      <% } %>
+
+      <!-- Form chuẩn POST, không dùng fetch/AJAX -->
+      <form action="/admin/dishes" method="POST" class="standard-form">
+        <div class="form-group">
+          <label for="name" class="form-label required">Tên Món Ăn:</label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name" 
+            class="form-control" 
+            placeholder="Ví dụ: Phở Bò Tái Nạm" 
+            value="<%= typeof dish !== 'undefined' && dish.name ? dish.name : '' %>"
+            required
+          >
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="price" class="form-label required">Đơn Giá (VNĐ):</label>
+            <input 
+              type="number" 
+              id="price" 
+              name="price" 
+              class="form-control" 
+              placeholder="Ví dụ: 55000" 
+              min="0" 
+              value="<%= typeof dish !== 'undefined' && dish.price !== undefined ? dish.price : '' %>"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="category" class="form-label">Phân Loại Món:</label>
+            <input 
+              type="text" 
+              id="category" 
+              name="category" 
+              class="form-control" 
+              placeholder="Ví dụ: Món Nước, Món Khô..." 
+              value="<%= typeof dish !== 'undefined' && dish.category ? dish.category : '' %>"
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="imageUrl" class="form-label">Đường Dẫn Hình Ảnh (URL hoặc /assets/img/dishes/...):</label>
+          <input 
+            type="text" 
+            id="imageUrl" 
+            name="imageUrl" 
+            class="form-control" 
+            placeholder="Ví dụ: /assets/img/dishes/pho-bo.jpg hoặc https://..." 
+            value="<%= typeof dish !== 'undefined' && dish.imageUrl ? dish.imageUrl : '' %>"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="description" class="form-label">Mô Tả Hương Vị:</label>
+          <textarea 
+            id="description" 
+            name="description" 
+            class="form-control" 
+            rows="4" 
+            placeholder="Mô tả nguyên liệu, hương vị đặc trưng của món ăn..."
+          ><%= typeof dish !== 'undefined' && dish.description ? dish.description : '' %></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="custom-checkbox">
+            <input 
+              type="checkbox" 
+              name="available" 
+              <%= typeof dish === 'undefined' || dish.available === undefined || dish.available === 'on' || dish.available === true ? 'checked' : '' %>
+            >
+            <span>Món ăn đang sẵn sàng phục vụ thực khách (Available)</span>
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn--primary">Lưu Món Ăn</button>
+          <a href="/admin/dishes" class="btn btn--ghost">Hủy Bỏ</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<%- include('../../partials/footer') %>

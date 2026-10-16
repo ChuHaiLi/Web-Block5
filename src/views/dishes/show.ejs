@@ -1,0 +1,74 @@
+<%- include('../partials/header', { title: `${dish.name} - RESTORAN` }) %>
+<%- include('../partials/navbar') %>
+
+<!-- Page Hero Section -->
+<section class="page-hero">
+  <div class="page-hero__bg">
+    <img src="/assets/img/menu-bg.svg" alt="<%= dish.name %>">
+  </div>
+  <div class="page-hero__overlay"></div>
+  <div class="container page-hero__content">
+    <h1 class="page-hero__title"><%= dish.name %></h1>
+    <p class="page-hero__breadcrumb">
+      <a href="/dishes">Thực Đơn</a> &nbsp;/&nbsp; Chi Tiết Món Ăn
+    </p>
+  </div>
+</section>
+
+<!-- Detail Section -->
+<section class="section">
+  <div class="container" style="max-width: 1000px;">
+    <div class="detail-card">
+      <div class="detail-layout">
+        <% 
+          const imgIndex = ((dish.id - 1) % 6) + 1;
+          const fallbackImg = '/assets/img/food-' + imgIndex + '.svg';
+          const displayImg = dish.imageUrl || fallbackImg;
+        %>
+        <div class="detail-image-box">
+          <img src="<%= displayImg %>" alt="<%= dish.name %>" onerror="this.onerror=null; this.src='<%= fallbackImg %>';">
+        </div>
+
+        <div class="detail-info">
+          <div class="detail-badges">
+            <% if (dish.category) { %>
+              <span class="menu-item__tag"><%= dish.category %></span>
+            <% } %>
+            <span class="menu-item__tag <%= dish.available ? 'menu-item__tag--available' : 'menu-item__tag--unavailable' %>">
+              <%= dish.available ? 'Đang phục vụ' : 'Tạm hết' %>
+            </span>
+            <span class="menu-item__tag menu-item__tag--unit">Mã món: #<%= dish.id %></span>
+          </div>
+
+          <h2 class="detail-title"><%= dish.name %></h2>
+          <div class="detail-price-text"><%= dish.price.toLocaleString('vi-VN') %> VNĐ</div>
+
+          <p class="detail-desc">
+            <%= dish.description ? dish.description : 'Món ăn đặc sản mang đậm phong vị ẩm thực truyền thống, được các đầu bếp chuẩn bị với sự tận tâm cao nhất.' %>
+          </p>
+
+          <div class="detail-meta-list">
+            <div>
+              <div class="meta-label">Ngày Cập Nhật</div>
+              <div class="meta-value"><%= new Date(dish.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: '2-digit', day: '2-digit' }) %></div>
+            </div>
+            <div>
+              <div class="meta-label">Phân Loại Món</div>
+              <div class="meta-value"><%= dish.category ? dish.category : 'Món chung' %></div>
+            </div>
+            <div>
+              <div class="meta-label">Tình Trạng Bếp</div>
+              <div class="meta-value"><%= dish.available ? 'Sẵn sàng phục vụ' : 'Tạm dừng nhận order' %></div>
+            </div>
+          </div>
+
+          <div class="detail-actions" style="margin-top: 10px;">
+            <a href="/dishes" class="btn btn--primary">← Quay Lại Thực Đơn</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

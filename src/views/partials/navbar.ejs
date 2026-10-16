@@ -1,0 +1,30 @@
+<nav class="navbar <%= typeof isAdmin !== 'undefined' && isAdmin ? 'navbar--admin' : '' %>">
+  <div class="container navbar__inner">
+    <% if (typeof isAdmin !== 'undefined' && isAdmin) { %>
+      <!-- Logo và Thương hiệu phía Quản Trị -->
+      <a href="/admin/dishes" class="navbar__logo">
+        <img src="/assets/img/logo-white.svg" alt="RESTORAN ADMIN">
+      </a>
+      <div class="navbar__menu">
+        <a href="/admin/dishes" class="navbar__link <%= currentPath.startsWith('/admin/dishes') ? 'navbar__link--active' : '' %>">Món Ăn</a>
+        <a href="/admin/chefs" class="navbar__link <%= currentPath.startsWith('/admin/chefs') ? 'navbar__link--active' : '' %>">Đầu Bếp</a>
+        <a href="/admin/ingredients" class="navbar__link <%= currentPath.startsWith('/admin/ingredients') ? 'navbar__link--active' : '' %>">Nguyên Liệu</a>
+        <a href="/dishes" class="navbar__link navbar__link--client">Xem Trang Khách →</a>
+      </div>
+    <% } else { %>
+      <!-- Logo và Menu phía Thực Khách (Chỉ đọc) -->
+      <a href="/dishes" class="navbar__logo">
+        <img src="/assets/img/logo-white.svg" alt="RESTORAN">
+      </a>
+      <div class="navbar__menu">
+        <a href="/dishes" class="navbar__link <%= currentPath === '/dishes' ? 'navbar__link--active' : '' %>">Thực Đơn</a>
+        <a href="/admin/dishes" class="navbar__link navbar__link--admin">Cổng Quản Trị</a>
+      </div>
+    <% } %>
+
+    <button class="navbar__toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<main class="main-content">

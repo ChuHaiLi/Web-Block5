@@ -1,0 +1,27 @@
+{
+  "name": "restaurant-ssr-app",
+  "version": "1.0.0",
+  "description": "Restaurant SSR Web Application with Express, EJS, Prisma ORM and Supabase PostgreSQL",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "seed": "node prisma/seed.js",
+    "crawl": "node scripts/crawl-dishes.js",
+    "db:push": "npx prisma db push",
+    "db:studio": "npx prisma studio"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.21.1",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "method-override": "^3.0.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.21.1"
+  }
+}

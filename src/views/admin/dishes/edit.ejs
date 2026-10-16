@@ -1,0 +1,114 @@
+<%- include('../../partials/header', { title: `Chỉnh Sửa: ${dish.name} - RESTORAN` }) %>
+<%- include('../../partials/navbar') %>
+
+<section class="section" style="padding-top: 120px;">
+  <div class="container">
+    <div class="form-card">
+      <div class="form-header">
+        <h1 class="form-title">Chỉnh Sửa Món Ăn</h1>
+        <p class="form-subtitle">Cập nhật thông tin món ăn ID #<%= dish.id %> qua phương thức PATCH (Method Override).</p>
+      </div>
+
+      <% if (error) { %>
+        <div class="alert alert-danger" role="alert">
+          <div class="alert-content">
+            <strong>Lỗi xác thực dữ liệu (HTTP 400 Bad Request):</strong>
+            <p><%= error %></p>
+          </div>
+        </div>
+      <% } %>
+
+      <!-- Form gửi POST với ?_method=PATCH qua method-override -->
+      <form action="/admin/dishes/<%= dish.id %>?_method=PATCH" method="POST" class="standard-form">
+        <div class="form-group">
+          <label for="name" class="form-label required">Tên Món Ăn:</label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name" 
+            class="form-control" 
+            value="<%= dish.name || '' %>"
+            required
+          >
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="price" class="form-label required">Đơn Giá (VNĐ):</label>
+            <input 
+              type="number" 
+              id="price" 
+              name="price" 
+              class="form-control" 
+              min="0" 
+              value="<%= dish.price !== undefined ? dish.price : '' %>"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="category" class="form-label">Phân Loại Món:</label>
+            <input 
+              type="text" 
+              id="category" 
+              name="category" 
+              class="form-control" 
+              value="<%= dish.category || '' %>"
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="imageUrl" class="form-label">Đường Dẫn Hình Ảnh (URL hoặc /assets/img/dishes/...):</label>
+          <div style="display: flex; gap: 14px; align-items: center;">
+            <input 
+              type="text" 
+              id="imageUrl" 
+              name="imageUrl" 
+              class="form-control" 
+              value="<%= dish.imageUrl || '' %>"
+              placeholder="Ví dụ: /assets/img/dishes/pho-bo.jpg"
+              style="flex: 1;"
+            >
+            <% if (dish.imageUrl) { %>
+              <img 
+                src="<%= dish.imageUrl %>" 
+                alt="Preview" 
+                class="dish-thumb" 
+                style="width: 44px; height: 44px; flex-shrink: 0;"
+              >
+            <% } %>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="description" class="form-label">Mô Tả Hương Vị:</label>
+          <textarea 
+            id="description" 
+            name="description" 
+            class="form-control" 
+            rows="4"
+          ><%= dish.description || '' %></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="custom-checkbox">
+            <input 
+              type="checkbox" 
+              name="available" 
+              <%= (dish.available === true || dish.available === 'on' || dish.available === 'true') ? 'checked' : '' %>
+            >
+            <span>Món ăn đang sẵn sàng phục vụ thực khách (Available)</span>
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn--primary">Lưu Thay Đổi</button>
+          <a href="/admin/dishes" class="btn btn--ghost">Hủy Bỏ</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<%- include('../../partials/footer') %>

@@ -1,0 +1,55 @@
+<%- include('../../partials/header', { title: `Chỉnh Sửa: ${ingredient.name} - RESTORAN` }) %>
+<%- include('../../partials/navbar') %>
+
+<section class="section" style="padding-top: 120px;">
+  <div class="container">
+    <div class="form-card">
+      <div class="form-header">
+        <h1 class="form-title">Chỉnh Sửa Nguyên Liệu</h1>
+        <p class="form-subtitle">Cập nhật thông tin nguyên liệu ID #<%= ingredient.id %> qua phương thức PATCH (Method Override).</p>
+      </div>
+
+      <% if (error) { %>
+        <div class="alert alert-danger" role="alert">
+          <div class="alert-content">
+            <strong>Lỗi xác thực dữ liệu (HTTP 400 Bad Request):</strong>
+            <p><%= error %></p>
+          </div>
+        </div>
+      <% } %>
+
+      <form action="/admin/ingredients/<%= ingredient.id %>?_method=PATCH" method="POST" class="standard-form">
+        <div class="form-group">
+          <label for="name" class="form-label required">Tên Nguyên Liệu:</label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name" 
+            class="form-control" 
+            value="<%= ingredient.name || '' %>"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="unit" class="form-label required">Đơn Vị Tính:</label>
+          <input 
+            type="text" 
+            id="unit" 
+            name="unit" 
+            class="form-control" 
+            value="<%= ingredient.unit || '' %>"
+            required
+          >
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn--primary">Lưu Thay Đổi</button>
+          <a href="/admin/ingredients" class="btn btn--ghost">Hủy Bỏ</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<%- include('../../partials/footer') %>

@@ -1,0 +1,94 @@
+<%- include('../partials/header', { title: 'Thực Đơn - RESTORAN' }) %>
+<%- include('../partials/navbar') %>
+
+<!-- Page Hero Section từ Bistro Template -->
+<section class="page-hero">
+  <div class="page-hero__bg">
+    <img src="/assets/img/menu-bg.svg" alt="Thực Đơn RESTORAN">
+  </div>
+  <div class="page-hero__overlay"></div>
+  <div class="container page-hero__content">
+    <h1 class="page-hero__title">Thực Đơn Nhà Hàng</h1>
+    <p class="page-hero__breadcrumb"><a href="/dishes">Trang Chủ</a> &nbsp;/&nbsp; Thực Đơn</p>
+  </div>
+</section>
+
+<!-- Menu Section -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-header__label">Tuyển Chọn Tinh Hoa</span>
+      <h2 class="section-header__title">Hương Vị Đặc Sắc</h2>
+      <div class="section-header__divider"></div>
+      <p class="section-header__text">Mỗi món ăn bắt đầu từ những nguyên liệu tươi ngon nhất, chuẩn bị bởi kỹ nghệ ẩm thực gia truyền.</p>
+    </div>
+
+    <!-- Thanh Tìm Kiếm (Form GET chuẩn, không fetch/AJAX) -->
+    <div class="search-section">
+      <form action="/dishes" method="GET" class="search-form">
+        <div class="search-input-group">
+          <input 
+            type="text" 
+            name="q" 
+            value="<%= typeof q !== 'undefined' ? q : '' %>" 
+            placeholder="Tìm món ăn theo tên (Ví dụ: Phở, Bún chả...)" 
+            class="search-input"
+          >
+          <% if (q) { %>
+            <a href="/dishes" class="btn-clear" title="Xóa bộ lọc">✕</a>
+          <% } %>
+        </div>
+        <button type="submit" class="btn btn--primary">Tìm Kiếm</button>
+      </form>
+      <% if (q) { %>
+        <div class="search-status">
+          Kết quả tìm kiếm cho từ khóa: <strong>"<%= q %>"</strong> (tìm thấy <%= dishes.length %> món)
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Danh Sách Món Ăn Phong Cách Bistro -->
+    <% if (dishes.length === 0) { %>
+      <div class="empty-state" style="text-align: center; padding: 60px 0;">
+        <h3 style="font-size: 1.8rem; margin-bottom: 12px;">Không tìm thấy món ăn nào</h3>
+        <p style="color: var(--text-muted); margin-bottom: 24px;">Vui lòng thử tìm kiếm với từ khóa khác hoặc quay lại xem toàn bộ thực đơn.</p>
+        <a href="/dishes" class="btn btn--primary">Xem Tất Cả Món Ăn</a>
+      </div>
+    <% } else { %>
+      <div class="menu-grid">
+        <% dishes.forEach(function(dish) { 
+             const imgIndex = ((dish.id - 1) % 6) + 1;
+             const fallbackImg = '/assets/img/food-' + imgIndex + '.svg';
+             const displayImg = dish.imageUrl || fallbackImg;
+        %>
+          <div class="menu-item">
+            <div class="menu-item__image">
+              <img src="<%= displayImg %>" alt="<%= dish.name %>" onerror="this.onerror=null; this.src='<%= fallbackImg %>';">
+            </div>
+            <div class="menu-item__info">
+              <div class="menu-item__header">
+                <a href="/dishes/<%= dish.id %>" class="menu-item__name"><%= dish.name %></a>
+                <span class="menu-item__dots"></span>
+                <span class="menu-item__price"><%= dish.price.toLocaleString('vi-VN') %> đ</span>
+              </div>
+              <p class="menu-item__desc">
+                <%= dish.description ? dish.description : 'Món ăn đặc sản mang đậm phong vị ẩm thực truyền thống.' %>
+              </p>
+              <div class="menu-item__tags">
+                <% if (dish.category) { %>
+                  <span class="menu-item__tag"><%= dish.category %></span>
+                <% } %>
+                <span class="menu-item__tag <%= dish.available ? 'menu-item__tag--available' : 'menu-item__tag--unavailable' %>">
+                  <%= dish.available ? 'Đang phục vụ' : 'Tạm hết' %>
+                </span>
+                <a href="/dishes/<%= dish.id %>" class="menu-item__tag menu-item__tag--unit">Xem Chi Tiết →</a>
+              </div>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

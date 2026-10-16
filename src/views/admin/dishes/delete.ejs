@@ -1,0 +1,45 @@
+<%- include('../../partials/header', { title: `Xác Nhận Xóa: ${dish.name} - RESTORAN` }) %>
+<%- include('../../partials/navbar') %>
+
+<section class="section" style="padding-top: 120px;">
+  <div class="container">
+    <div class="confirm-card">
+      <h1 class="confirm-title">Xác Nhận Xóa Món Ăn</h1>
+      <p class="confirm-subtitle">
+        Bạn có chắc chắn muốn xóa bản ghi món ăn này khỏi cơ sở dữ liệu Supabase không?
+      </p>
+
+      <div class="confirm-target-box">
+        <div class="target-title"><%= dish.name %></div>
+        <div class="target-meta">
+          <span>Mã món: #<%= dish.id %></span>
+          <span>•</span>
+          <span>Giá: <%= dish.price.toLocaleString('vi-VN') %> VNĐ</span>
+          <span>•</span>
+          <span>Phân loại: <%= dish.category || 'Món chung' %></span>
+        </div>
+        <% if (dish.description) { %>
+          <p style="font-size: 0.9rem; color: var(--text-muted); font-style: italic; margin-top: 10px;">
+            "<%= dish.description %>"
+          </p>
+        <% } %>
+      </div>
+
+      <div class="confirm-warning-note">
+        Lưu ý: Thao tác này sẽ xóa vĩnh viễn dữ liệu và không thể hoàn tác sau khi đã thực hiện.
+      </div>
+
+      <!-- Form xác nhận gửi DELETE qua Method Override -->
+      <form action="/admin/dishes/<%= dish.id %>?_method=DELETE" method="POST" class="confirm-actions">
+        <button type="submit" class="btn btn--primary" style="background: var(--burgundy); color: #fff; width: 100%;">
+          Xác Nhận Xóa Vĩnh Viễn
+        </button>
+        <a href="/admin/dishes" class="btn btn--ghost" style="width: 100%; text-align: center;">
+          Hủy Bỏ và Quay Lại
+        </a>
+      </form>
+    </div>
+  </div>
+</section>
+
+<%- include('../../partials/footer') %>

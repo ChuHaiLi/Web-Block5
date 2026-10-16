@@ -1,0 +1,92 @@
+<%- include('../../partials/header', { title: 'Quản Trị Nguyên Liệu - RESTORAN' }) %>
+<%- include('../../partials/navbar') %>
+
+<section class="section" style="padding-top: 120px;">
+  <div class="container">
+    <div class="admin-header">
+      <div>
+        <h1 class="admin-header__title">Quản Trị Kho Nguyên Liệu</h1>
+        <p class="admin-header__subtitle">Danh mục các nguyên liệu và đơn vị tính dùng trong bếp nhà hàng.</p>
+      </div>
+      <div>
+        <a href="/admin/ingredients/new" class="btn btn--primary">+ Thêm Nguyên Liệu</a>
+      </div>
+    </div>
+
+    <!-- Thanh Tìm Kiếm Nguyên Liệu -->
+    <div class="admin-filter-card">
+      <form action="/admin/ingredients" method="GET" class="admin-filter-form">
+        <div class="admin-filter-field admin-filter-field--search">
+          <label class="admin-filter-label" for="filter-q">Tìm kiếm nguyên liệu</label>
+          <input
+            type="text"
+            id="filter-q"
+            name="q"
+            value="<%= typeof q !== 'undefined' ? q : '' %>"
+            placeholder="Tìm theo tên nguyên liệu hoặc đơn vị tính..."
+            class="admin-filter-input"
+          >
+        </div>
+        <div class="admin-filter-buttons">
+          <button type="submit" class="admin-filter-btn btn--primary">🔍 Tìm Kiếm</button>
+          <% if (typeof q !== 'undefined' && q) { %>
+            <a href="/admin/ingredients" class="admin-filter-btn btn--ghost">✕ Xóa Tìm Kiếm</a>
+          <% } %>
+        </div>
+      </form>
+      <div class="admin-filter-summary">
+        <div>
+          Hiển thị <strong><%= ingredients.length %></strong> nguyên liệu (trên tổng số <strong><%= typeof totalCount !== 'undefined' ? totalCount : ingredients.length %></strong> mục trong kho)
+        </div>
+        <% if (typeof q !== 'undefined' && q) { %>
+          <div style="font-size: 0.82rem; color: var(--gold-dark, #b45309);">
+            * Kết quả tìm kiếm cho từ khóa: "<%= q %>"
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="admin-table-card">
+      <div style="overflow-x: auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width: 70px;">ID</th>
+              <th>Tên Nguyên Liệu</th>
+              <th>Đơn Vị Tính</th>
+              <th>Ngày Nhập Kho</th>
+              <th style="width: 180px; text-align: center;">Hành Động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (ingredients.length === 0) { %>
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 40px;">
+                  Chưa có nguyên liệu nào phù hợp với tìm kiếm.
+                  <% if (typeof q !== 'undefined' && q) { %>
+                    <div style="margin-top: 12px;"><a href="/admin/ingredients" class="btn btn--ghost">Xem tất cả nguyên liệu</a></div>
+                  <% } %>
+                </td>
+              </tr>
+            <% } else { %>
+              <% ingredients.forEach(function(item) { %>
+                <tr>
+                  <td><strong>#<%= item.id %></strong></td>
+                  <td><strong style="color: var(--charcoal); font-size: 1.05rem;"><%= item.name %></strong></td>
+                  <td><span class="menu-item__tag menu-item__tag--unit"><%= item.unit %></span></td>
+                  <td><%= new Date(item.createdAt).toLocaleDateString('vi-VN') %></td>
+                  <td class="action-cell">
+                    <a href="/admin/ingredients/<%= item.id %>/edit" class="btn-xs btn-xs-edit">Sửa</a>
+                    <a href="/admin/ingredients/<%= item.id %>/delete" class="btn-xs btn-xs-delete">Xóa</a>
+                  </td>
+                </tr>
+              <% }); %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../../partials/footer') %>

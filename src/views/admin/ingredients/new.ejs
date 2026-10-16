@@ -1,0 +1,57 @@
+<%- include('../../partials/header', { title: 'Thêm Nguyên Liệu Mới - RESTORAN' }) %>
+<%- include('../../partials/navbar') %>
+
+<section class="section" style="padding-top: 120px;">
+  <div class="container">
+    <div class="form-card">
+      <div class="form-header">
+        <h1 class="form-title">Thêm Nguyên Liệu Mới</h1>
+        <p class="form-subtitle">Khai báo nguyên liệu và đơn vị tính định lượng trong nhà bếp.</p>
+      </div>
+
+      <% if (error) { %>
+        <div class="alert alert-danger" role="alert">
+          <div class="alert-content">
+            <strong>Lỗi xác thực dữ liệu (HTTP 400 Bad Request):</strong>
+            <p><%= error %></p>
+          </div>
+        </div>
+      <% } %>
+
+      <form action="/admin/ingredients" method="POST" class="standard-form">
+        <div class="form-group">
+          <label for="name" class="form-label required">Tên Nguyên Liệu:</label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name" 
+            class="form-control" 
+            placeholder="Ví dụ: Thịt bò tái thăn, Bột năng..." 
+            value="<%= typeof ingredient !== 'undefined' && ingredient.name ? ingredient.name : '' %>"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="unit" class="form-label required">Đơn Vị Tính:</label>
+          <input 
+            type="text" 
+            id="unit" 
+            name="unit" 
+            class="form-control" 
+            placeholder="Ví dụ: kg, gam, lít, bó, quả..." 
+            value="<%= typeof ingredient !== 'undefined' && ingredient.unit ? ingredient.unit : '' %>"
+            required
+          >
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn--primary">Lưu Nguyên Liệu</button>
+          <a href="/admin/ingredients" class="btn btn--ghost">Hủy Bỏ</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<%- include('../../partials/footer') %>
